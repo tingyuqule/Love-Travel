@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>解夏的探索</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        #game-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #ff4081;
+        }
+        .button {
+            background-color: #ff4081;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        .button:hover {
+            background-color: #e91e63;
+        }
+        .hidden {
+            display: none;
+        }
+        #progress-bar {
+            width: 100%;
+            background-color: #ddd;
+            height: 20px;
+            margin-bottom: 20px;
+        }
+        #progress {
+            width: 0%;
+            height: 100%;
+            background-color: #4CAF50;
+            text-align: center;
+            line-height: 20px;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="game-container">
+        <h1>解夏的探索</h1>
+        <div id="progress-bar">
+            <div id="progress">0%</div>
+        </div>
+        <div id="start-screen">
+            <h2>欢迎来到解夏的爱情探索之旅！</h2>
+            <p>这是一段充满挑战和乐趣的旅程，你们将一起探索爱情的深度和广度。准备好了吗？</p>
+            <button class="button" onclick="startGame()">开始游戏</button>
+        </div>
+        <div id="game-content" class="hidden"></div>
+    </div>
+
+    <script>
+        const levels = [
+            {
+                title: "初识之缘",
+                description: "回顾你们的初次相遇，重温那份心动。",
+                tasks: [
+                    { 
+                        type: "question", 
+                        content: "你还记得第一次见面时对方穿的是什么颜色的衣服吗？",
+                        options: ["A. 记得清楚", "B. 有点印象", "C. 完全不记得"],
+                        feedback: {
+                            "A": "你的观察力真好！这说明初次见面时你就对对方印象深刻。",
+                            "B": "至少还有一些印象，这很正常。重要的是现在的你们。",
+                            "C": "没关系，重要的是你们现在在一起。也许可以聊聊你们的第一印象？"
+                        }
+                    },
+                    { type: "activity", content: "用一句话描述你第一次见到对方时的感受，然后交换分享。" },
+                    { type: "challenge", content: "闭上眼睛，用手指在对方手掌上写下你们相识的日期，看对方能否猜出。" }
+                ]
+            },
+            {
+                title: "沟通艺术",
+                description: "学习如何更好地表达自己，倾听对方。",
+                tasks: [
+                    { 
+                        type: "question", 
+                        content: "你觉得在我们的关系中，哪些方面的沟通需要改善？",
+                        options: ["A. 情感表达", "B. 日常琐事", "C. 未来规划", "D. 矛盾处理"],
+                        feedback: {
+                            "A": "情感表达确实是很多关系中的难点。也许可以尝试更多地说出'我爱你'，或者用行动来表达。",
+                            "B": "日常沟通看似简单，却是维系感情的重要方式。试着分享更多你的日常吧。",
+                            "C": "讨论未来是很重要的。定期坐下来聊聊你们对未来的期望可能会有帮助。",
+                            "D": "学会妥善处理矛盾是每对伴侣都需要努力的。也许可以制定一些'吵架守则'？"
+                        }
+                    },
+                    { type: "activity", content: "进行3分钟的深度对视，不要说话，感受彼此的情感。" },
+                    { 
+                        type: "challenge", 
+                        content: "角色互换：选择一个最近的矛盾点，互换角色进行对话。体验对方的立场和感受。",
+                        options: ["A. 尝试角色互换", "B. 直接讨论矛盾"],
+                        feedback: {
+                            "A": "很好！角色互换可以帮助你们更好地理解对方的想法和感受。",
+                            "B": "直接讨论也不错。记得要用'我感受'的方式表达，避免指责对方。"
+                        }
+                    }
+                ]
+            },
+            {
+                title: "未来畅想",
+                description: "共同规划你们的未来，找到共同的目标和梦想。",
+                tasks: [
+                    { 
+                        type: "question", 
+                        content: "五年后的你们是什么样子？分享你的想象。",
+                        options: ["A. 事业有成", "B. 组建家庭", "C. 环游世界", "D. 平静生活"],
+                        feedback: {
+                            "A": "职业发展对你来说很重要。你们可以讨论如何互相支持对方的事业。",
+                            "B": "家庭对你很重要。不妨聊聊你们对于家庭的期望和规划。",
+                            "C": "你向往自由和冒险。也许可以一起制定一个旅行计划？",
+                            "D": "你珍惜平静的生活。讨论一下你们心目中的理想生活吧。"
+                        }
+                    },
+                    { type: "activity", content: "一起绘制一幅代表你们共同未来的简笔画。" },
+                    { 
+                    type: "challenge", 
+                    content: "制定一个双方都感兴趣的短期目标，并讨论如何互相支持来实现它。",
+                    options: ["A. 学习一门新语言", "B. 培养一项新的运动爱好", "C. 一起参与志愿服务", "D. 学习烹饪新菜系"],
+                    feedback: {
+                        "A": "学习新语言可以开拓视野，也许还能规划一次使用这门语言的旅行？",
+                        "B": "运动不仅有益健康，还能增进你们的互动。选择一项你们都喜欢的运动吧！",
+                        "C": "志愿服务能让你们一起为社会做贡献，这会给关系带来新的意义。",
+                        "D": "一起下厨不仅能学习新技能，还能增进感情。期待你们的美食之旅！"
+                    }
+                }
+            ]
+        }
+            ];
+        
+            let currentLevel = 0;
+            let currentTask = 0;
+        
+            function startGame() {
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('game-content').classList.remove('hidden');
+        loadLevel();
+            }
+        
+            function loadLevel() {
+        if (currentLevel >= levels.length) {
+            endGame();
+            return;
+        }
+        
+        const level = levels[currentLevel];
+        let content = `<h2>${level.title}</h2>`;
+        content += `<p>${level.description}</p>`;
+        content += `<div id="task-content"></div>`;
+        
+        document.getElementById('game-content').innerHTML = content;
+        loadTask();
+            }
+        
+            function loadTask() {
+        const level = levels[currentLevel];
+        const task = level.tasks[currentTask];
+        let content = `<h3>${task.type === 'question' ? '问题' : task.type === 'activity' ? '活动' : '挑战'}</h3>`;
+        content += `<p>${task.content}</p>`;
+        
+        if (task.options) {
+            content += '<div id="options">';
+            task.options.forEach(option => {
+                content += `<button class="button" onclick="selectOption('${option.charAt(0)}')">${option}</button>`;
+            });
+            content += '</div>';
+        } else {
+            content += `<button class="button" onclick="nextTask()">完成任务</button>`;
+        }
+        
+        document.getElementById('task-content').innerHTML = content;
+        updateProgressBar();
+            }
+        
+            function selectOption(option) {
+        const task = levels[currentLevel].tasks[currentTask];
+        let content = `<p>${task.feedback[option]}</p>`;
+        content += `<button class="button" onclick="nextTask()">继续</button>`;
+        document.getElementById('task-content').innerHTML = content;
+            }
+        
+            function nextTask() {
+        currentTask++;
+        if (currentTask >= levels[currentLevel].tasks.length) {
+            currentLevel++;
+            currentTask = 0;
+            loadLevel();
+        } else {
+            loadTask();
+        }
+            }
+        
+            function updateProgressBar() {
+        const totalTasks = levels.reduce((sum, level) => sum + level.tasks.length, 0);
+        const completedTasks = levels.slice(0, currentLevel).reduce((sum, level) => sum + level.tasks.length, 0) + currentTask;
+        const percentage = Math.round((completedTasks / totalTasks) * 100);
+        
+        document.getElementById('progress').style.width = percentage + '%';
+        document.getElementById('progress').textContent = percentage + '%';
+            }
+        
+            function endGame() {
+        let content = `
+            <h2>恭喜你们完成了爱情探索之旅！</h2>
+            <p>你们已经一起经历了许多有趣的挑战和深入的交流。希望这段旅程让你们的关系更加亲密和牢固。</p>
+            <h3>回顾与反思</h3>
+            <ul>
+                <li>在这个过程中，你最大的收获是什么？</li>
+                <li>你对伴侣有了哪些新的认识？</li>
+                <li>有哪些方面你觉得还需要继续努力？</li>
+            </ul>
+            <p>记住，爱情是一段永无止境的探索之旅。继续保持好奇心，珍惜彼此，共同成长。</p>
+            <button class="button" onclick="restartGame()">再玩一次</button>
+        `;
+        document.getElementById('game-content').innerHTML = content;
+            }
+        
+            function restartGame() {
+        currentLevel = 0;
+        currentTask = 0;
+        startGame();
+            }
+    </script>
+</body>
+
+</html>
